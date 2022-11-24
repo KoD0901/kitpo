@@ -1,0 +1,397 @@
+package git.group.List;
+
+import git.group.Builder.UserType;
+import git.group.Comparator.Comparator;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class TList implements Serializable
+{
+	private class Node implements Serializable
+	{
+		public Node   next;
+		public Object data;
+
+		public Node(Object data)
+		{
+			this.data = data;
+			this.next = null;
+		}
+	}
+
+	private Node       head;
+	private Node       tail;
+	private int        size;
+	private UserType builder;
+	private Comparator comparator;
+
+	public TList(UserType builder)
+	{
+		this.builder    = builder;
+		this.comparator = builder.getTypeComparator();
+		this.head       = null;
+		this.tail       = null;
+		this.size       = 0;
+	}
+
+	public TList(UserType[] arr) {
+		for (int i=0; i<arr.length; i++)
+		{
+			pushEnd(arr[i]);
+		}
+	}
+
+	public boolean clear()
+	{
+        if (head == null)
+        {
+            return false;
+        }
+
+        while (head != null)
+        {
+            delete(0);
+        }
+
+		return true;
+	}
+
+	public boolean pushFront(Object obj)
+	{// vstavka v front
+
+		Node nNode = new Node(obj);
+
+		if (head == null)
+		{
+			head = nNode;
+			tail = nNode;
+		}
+		else
+		{
+			Node temp = head;
+			head      = nNode;
+			head.next = temp;
+		}
+		size++;
+		return true;
+	}
+
+	public boolean pushEnd(Object data)
+	{
+		Node nNode = new Node(data);
+
+		if (head == null)
+		{
+			head = nNode;
+			tail = nNode;
+		}
+		else
+		{
+			tail.next = nNode;
+			tail      = tail.next;
+		}
+		size++;
+		return true;
+	}
+
+	private void pushEnd(TList toInsert)
+	{
+		if (toInsert != null)
+		{
+			tail.next = toInsert.head;
+			tail      = toInsert.tail;
+			size += toInsert.size;
+		}
+	}
+
+	public boolean add(Object data, int index)
+	{
+		Node nNode = new Node(data);
+
+		if (head == null)
+		{
+			head = nNode;
+			tail = nNode;
+		}
+		else
+		{
+			Node temp, current;
+			temp    = head;
+			current = null;
+
+			for (int i = 0; i < index; i++)
+			{
+				current = temp;
+				temp    = temp.next;
+			}
+
+			current.next = nNode;
+			nNode.next   = temp;
+		}
+		size++;
+		return true;
+	}
+
+	public boolean delete(int index)
+	{
+        if (size < 0 || index < 0)
+        {
+            return false;
+        }
+
+		Node toDel, toDelPrev = null;
+
+		if (head == null)
+		{
+			System.out.println("List is empty");
+			return false;
+		}
+		else
+		{
+			if (head != tail)
+			{
+				//Поиск ноды и её предщественника
+                if (index > 0)
+                {
+                    toDelPrev = findNode(index - 1);
+                    toDel     = toDelPrev.next;
+                }
+                else
+                {
+                    toDel = head;
+                }
+
+				if (toDelPrev != null)
+				{
+					toDelPrev.next = toDel.next;
+					toDel          = null;
+				}
+				//Попали в голову
+				else
+				{
+					head  = toDel.next;
+					toDel = null;
+				}
+			}
+			else
+			{
+				head = tail = null;
+			}
+		}
+		size--;
+		return true;
+	}
+
+	public Object find(int index)
+	{
+		Object dataNode;
+		Node   current = head;
+
+		if (index == 0)
+		{
+			dataNode = current.data;
+			return dataNode;
+		}
+
+        for (int i = 0; i < index; i++)
+        {
+            current = current.next;
+        }
+		dataNode = current.data;
+		return dataNode;
+	}
+
+	public int find(Object obj)
+	{
+		Node current = head;
+		int  index   = 0;
+
+        if (head == null)
+        {
+            return -1;
+        }
+        else
+        {
+            while (current != null)
+            {
+                if (current.data == obj)
+                {
+                    return index;
+                }
+                index++;
+                current = current.next;
+            }
+        }
+		return -1;
+	}
+
+	public void forEach(DoIt action) {
+		ArrayList arr = new ArrayList();
+
+		for (Node cur = head; cur != null; cur = cur.next)
+			arr.add(cur.data);
+
+		for (int i=0; i<arr.size();i++) {
+			String str;
+			if (arr.get(i) == null) str = "null ";
+			else str = arr.get(i).toString() + " ";
+			action.doIt(str);
+		}
+	}
+
+	private void swap(int q, int z)
+	{
+		//q должно быть обязательно меньше z
+		//Если это условие нарушается, то делаем обмен индексов
+        if (q == z)
+        {
+            return;
+        }
+        else if (q > z)
+        {
+            int buf = q;
+            q = z;
+            z = buf;
+        }
+		Node nqPrev, nq;
+		//Ищем ноду z
+		Node nzPrev = findNode(z - 1);
+		Node nz     = nzPrev.next;
+		//Ищем ноду q
+        if (q > 0)
+        {
+            nqPrev      = findNode(q - 1);
+            nq          = nqPrev.next;
+            nqPrev.next = nz;
+        }
+        else
+        {
+            nq = findNode(q);
+        }
+		Node buf;
+        if (z - q == 1)
+        {
+            buf = nq;
+        }
+        else
+        {
+            buf = nq.next;
+        }
+		nq.next = nz.next;
+		nz.next = buf;
+        if (z - q > 1)
+        {
+            nzPrev.next = nq;
+        }
+		//Если переставляли первый или последний элементы
+        if (q == 0)
+        {
+            head = nz;
+        }
+        if (z == size - 1)
+        {
+            tail = nq;
+        }
+	}
+
+	public TList sort()
+	{
+		TList r = quicksort(this);
+		return r;
+	}
+
+	private TList quicksort(TList list)
+	{
+        if (list == null)
+        {
+            return list;
+        }
+		Node head_ = list.head;
+		Node it    = head_.next;
+        if (it == null)
+        {
+            return list;
+        }
+		TList lesser  = null;
+		TList greater = null;
+		while (it != null)
+		{
+			int comp = comparator.compare(it.data, head_.data);
+			if (comp < 0 || comp == 0)
+			{
+                if (lesser == null)
+                {
+                    lesser = new TList(builder);
+                }
+				lesser.pushEnd(it.data);
+			}
+			else
+			{
+                if (greater == null)
+                {
+                    greater = new TList(builder);
+                }
+				greater.pushEnd(it.data);
+			}
+			it = it.next;
+		}
+
+		lesser  = quicksort(lesser);
+		greater = quicksort(greater);
+
+		TList buf = new TList(builder);
+		buf.pushEnd(head_.data);
+		buf.pushEnd(greater);
+        if (lesser == null)
+        {
+            return buf;
+        }
+		lesser.pushEnd(buf);
+		return lesser;
+	}
+
+	private Node findNode(int id)
+	{
+		Node res = head;
+        for (int i = 0; i < id; i++)
+        {
+            res = res.next;
+        }
+		return res;
+	}
+
+	//GET
+	//SET
+	public int getSize()
+	{
+		return this.size;
+	}
+
+	public UserType getBuilder()
+	{
+		return builder;
+	}
+
+	public String toString() {
+		Node cur = head;
+		String str ="";
+		for (int i = 0; i < size; i++) {
+			str += (cur.data.toString());
+			str+="\n";
+			cur = cur.next;
+			}
+		return str;
+	}
+
+	public boolean setBuilder(UserType builder)
+	{
+		if (size == 0)
+		{
+			this.builder    = builder;
+			this.comparator = builder.getTypeComparator();
+			return true;
+		}
+		return false;
+	}
+}
