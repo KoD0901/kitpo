@@ -240,61 +240,6 @@ public class TList implements Serializable
 		}
 	}
 
-	private void swap(int q, int z)
-	{
-		//q должно быть обязательно меньше z
-		//Если это условие нарушается, то делаем обмен индексов
-        if (q == z)
-        {
-            return;
-        }
-        else if (q > z)
-        {
-            int buf = q;
-            q = z;
-            z = buf;
-        }
-		Node nqPrev, nq;
-		//Ищем ноду z
-		Node nzPrev = findNode(z - 1);
-		Node nz     = nzPrev.next;
-		//Ищем ноду q
-        if (q > 0)
-        {
-            nqPrev      = findNode(q - 1);
-            nq          = nqPrev.next;
-            nqPrev.next = nz;
-        }
-        else
-        {
-            nq = findNode(q);
-        }
-		Node buf;
-        if (z - q == 1)
-        {
-            buf = nq;
-        }
-        else
-        {
-            buf = nq.next;
-        }
-		nq.next = nz.next;
-		nz.next = buf;
-        if (z - q > 1)
-        {
-            nzPrev.next = nq;
-        }
-		//Если переставляли первый или последний элементы
-        if (q == 0)
-        {
-            head = nz;
-        }
-        if (z == size - 1)
-        {
-            tail = nq;
-        }
-	}
-
 	public TList sort()
 	{
 		TList r = quicksort(this);
