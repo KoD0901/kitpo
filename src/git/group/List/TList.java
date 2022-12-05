@@ -55,7 +55,7 @@ public class TList implements Serializable
 	}
 
 	public boolean pushFront(Object obj)
-	{// vstavka v front
+	{
 
 		Node nNode = new Node(obj);
 
@@ -138,7 +138,6 @@ public class TList implements Serializable
 		{
 			if (head != tail)
 			{
-				//Поиск ноды и её предщественника
                 if (index > 0)
                 {
                     toDelPrev = findNode(index - 1);
@@ -187,30 +186,6 @@ public class TList implements Serializable
         }
 		dataNode = current.data;
 		return dataNode;
-	}
-
-	public int find(Object obj)
-	{
-		Node current = head;
-		int  index   = 0;
-
-        if (head == null)
-        {
-            return -1;
-        }
-        else
-        {
-            while (current != null)
-            {
-                if (current.data == obj)
-                {
-                    return index;
-                }
-                index++;
-                current = current.next;
-            }
-        }
-		return -1;
 	}
 
 	public void forEach(DoIt action) {
@@ -282,8 +257,6 @@ public class TList implements Serializable
 		return res;
 	}
 
-	//GET
-	//SET
 	public int getSize()
 	{
 		return this.size;
