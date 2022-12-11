@@ -2,8 +2,6 @@ package git.group.scala
 
 import git.group.java.UI.Gui
 import git.group.java.Builder.{UserType, UserTypeInteger}
-import git.group.java.Comparator.Comparator
-import git.group.java.UserFactory
 import git.group.java.Test
 
 object Main {
