@@ -12,7 +12,6 @@ public interface TListInterface {
     boolean add(Object data, int index);
     boolean delete(int index);
     Object find(int index);
-    //void forEach(DoIt action);
     void forEach(Consumer<UserType> action);
     TList sort(Comparator comparator);
     UserType getBuilder();
