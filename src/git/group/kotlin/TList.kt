@@ -1,6 +1,6 @@
 package git.group.kotlin
 
-import git.group.java.List. TListInterface
+import git.group.java.List.TListInterface
 import git.group.java.Builder.UserType
 import git.group.java.Comparator.Comparator
 import git.group.java.List.DoIt
